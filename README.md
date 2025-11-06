@@ -11,7 +11,9 @@ The solver uses the **Jacobi relaxation method** to solve the **Laplace equation
 Snapshots are saved every 500 epochs and mirrored to reconstruct the full temperature field.  
 Visualization of the temperature evolution and steady-state result was created in **ParaView** and exported as an **MP4/AVI** animation.
 
-[▶️ Watch temperature_progression.avi](media/temperature_progression.avi)
+## Temperature Progression
+
+![Temperature evolution](media/temperature_progression.gif)
 
 
 
