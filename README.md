@@ -14,7 +14,7 @@ Visualization of the temperature evolution and steady-state result was created i
 ### Final Converged Temperature Field
 The steady-state solver converged to a tolerance of **Δ = 1×10⁻³** within **8664 epochs**.  
 The final temperature distribution is shown below:
-![final]media/(converged_epoch.png)
+![final](media/converged_epoch.png)
 
 ## Temperature Progression
 The animation below shows the steady-state solver approaching convergence.  
