@@ -9,7 +9,7 @@ The initial guess for all unknown cells was 90 °F, chosen as a balanced startin
 
 The solver uses the **Jacobi relaxation method** to solve the **Laplace equation** on a half-domain with left–right symmetry to reduce computation time.  
 Snapshots are saved every 500 epochs and mirrored to reconstruct the full temperature field.  
-Visualization of the temperature evolution and steady-state result was created in **ParaView** and exported as an **MP4/AVI** animation.
+Visualization of the temperature evolution and steady-state result was created in **ParaView** and exported as an **GIF/AVI** animation.
 
 ### Final Converged Temperature Field
 The steady-state solver converged to a tolerance of **Δ = 1×10⁻³** within **8664 epochs**.  
