@@ -6,4 +6,4 @@
 
 Visualization of the Jacobi solver convergence (made in ParaView).
 
-[▶️ Watch temperature_progression.avi](media/temperature_progression.avi)
+![Temperature evolution](media/temperature_progression.gif)
