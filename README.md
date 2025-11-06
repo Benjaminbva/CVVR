@@ -15,5 +15,4 @@ Visualization of the temperature evolution and steady-state result was created i
 
 ![Temperature evolution](media/temperature_progression.gif)
 
-
-
+[ Download full animation (AVI)](media/temperature_progression.avi)
