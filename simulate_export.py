@@ -57,14 +57,9 @@ def mirror_full_from_half(T_half):
     return np.hstack([left, T_half])
 
 # --------------------------
-# Export full structured CSV with physical coords (0..9 m)
+# Export full structured CSV with physical coordinates (0..9 m)
 # --------------------------
-def export_structured_csv_full(T_full, L, out_path):
-    """
-    Writes a structured table for ParaView:
-      columns: i,j,k,x,y,Temperature
-    X, Y are scaled from 0..L
-    """
+def export_structured_csv_full(T_full, L, out_path, time_value=None):
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -73,6 +68,8 @@ def export_structured_csv_full(T_full, L, out_path):
     h_y = L / (Ny - 1)
 
     with out_path.open("w", newline="") as f:
+        if time_value is not None:
+            f.write(f"# TIME={time_value}\n") 
         w = csv.writer(f)
         w.writerow(["i", "j", "k", "x", "y", "Temperature"])
         for j in range(Ny):
@@ -108,6 +105,10 @@ def jacobi_laplace_half_with_snapshots(
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    # Export initial state (epoch 0)
+    T_full = mirror_full_from_half(T)
+    export_structured_csv_full(T_full, L, out_dir / f"{prefix}_{epochs:06d}.csv", time_value=epochs)
+
     while True:
         T_new = T.copy()
 
@@ -116,7 +117,6 @@ def jacobi_laplace_half_with_snapshots(
         mask = var[1:-1, 1:-1]
         T_new[interior][mask] = avg[mask]
 
-        # Neumann (∂T/∂x = 0) at centerline
         T_new[:, 0] = T_new[:, 1]
 
         # keep Dirichlet fixed
@@ -133,16 +133,31 @@ def jacobi_laplace_half_with_snapshots(
 
         if epochs % snap_every == 0:
             T_full = mirror_full_from_half(T)
-            export_structured_csv_full(T_full, L, out_dir / f"{prefix}_{epochs:06d}.csv")
+            export_structured_csv_full(T_full, L, out_dir / f"{prefix}_{epochs:06d}.csv", time_value=epochs)
 
+        # Stopping + padded final snapshot
         if max_change < delta or epochs >= max_iters:
             T_full = mirror_full_from_half(T)
-            export_structured_csv_full(T_full, L, out_dir / f"{prefix}_final.csv")
+
+            # pad to next clean multiple of snap_every 
+            pad_epochs = ((epochs + snap_every - 1) // snap_every) * snap_every
+
+            if pad_epochs != epochs:
+                export_structured_csv_full(
+                    T_full, L,
+                    out_dir / f"{prefix}_{pad_epochs:06d}.csv",
+                    time_value=pad_epochs
+                )
+
+            # optional: also keep a final file
+            export_structured_csv_full(
+                T_full, L,
+                out_dir / f"{prefix}_final.csv",
+                time_value=epochs
+            )
+
             return T, epochs, max_change
 
-# --------------------------
-# Main
-# --------------------------
 def main():
     T0_half, fixed_half, h_y, h_x, L = build_problem_half(
         N=241, L=9.0, L_inner=3.0,
